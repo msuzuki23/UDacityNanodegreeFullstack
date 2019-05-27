@@ -1,0 +1,8 @@
+<p>Hello from Show Car</p>
+<p><a href = "{{url_for('showCompany', company_id = car.company_id)}}"> <p>{{car.company.name}}</p></a>
+<p>{{car.car_name}}</p>
+<p>{{car.car_desc}}</p>
+
+<p><a href = "{{url_for('editCar',car_id = car.car_id)}}">Edit</a></p>
+
+<p><a href = "{{url_for('deleteCar',car_id = car.car_id)}}">Delete</a></p>

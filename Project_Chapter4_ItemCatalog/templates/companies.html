@@ -1,25 +1,24 @@
 <html>
-
 <head>
 <!-- <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}"> -->
 	</head>
 
-
 <body>
 <h1>Companies</h1>
 <p>Hi there from Companies</p>
+
+<p><a href = "{{url_for('addCar')}}">Add Car</a></p>
+
+
 {% for company in companies %}
-<p>{{company.name}}</p>
+<p><a href = "{{url_for('showCompany', company_id = company.id)}}"> <p>{{company.name}}</p></a>
+
+
 {% endfor %}
 
-
-
-<h1>Cars</h1>
-{% for car in cars %}
-<p>{{car.car_name}}</p>
-{% endfor %}
 
 </div>
 </body>
-
 </html>
+
+

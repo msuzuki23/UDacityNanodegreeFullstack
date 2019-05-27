@@ -1,0 +1,24 @@
+
+<h1>New Car/h1>
+
+<form action="#" method = 'post'>
+
+
+    <p>Car Name:</p>
+        <input type ='text' size='30' name='car_name'>
+    <p>Car Description:</p>
+    <textarea name='car_desc' rows="4" cols="50">Enter Car Description</textarea>
+    </br>
+
+    <select name='company_id'>
+        {% for company in companies %}
+        <option value="{{company.id}}">{{company.name}}</option>
+        {% endfor %}
+      </select> 
+
+
+
+
+<input type='submit' value='Create'>
+
+</form>
