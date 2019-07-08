@@ -1,0 +1,15 @@
+body {
+  min-height: 100%;
+}
+html {
+  height: 100%;
+}
+
+#wrapper {
+  /* background-color: yellow; */
+  min-height: 650px;
+}
+
+#result {
+  overflow: auto;
+}

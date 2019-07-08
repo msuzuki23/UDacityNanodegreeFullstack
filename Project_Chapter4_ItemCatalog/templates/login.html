@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="static/stylesheets/base.css">
+    <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://apis.google.com/js/client:platform.js?onload=start"></script>
+    <script>
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '120590126637-mjtbdcpq1alt80mjeq192o1shf68ki2r.apps.googleusercontent.com'
+        });
+      });
+    </script>
+    <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <!-- FACEBOOK -->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '387754945163220',
+          cookie     : true,  // enable cookies to allow the server to access
+          xfbml      : true,  // parse social plugins on this page
+          version    : 'v3.3' // The Graph API version to use for the call
+        });
+      };
+      // Load the SDK asynchronously
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+      // Here we run a very simple test of the Graph API after login is
+      // successful.  See statusChangeCallback() for when this call is made.
+      function sendTokenToServer() {
+        $('#logproviders').attr('style', 'display: none');
+        var access_token = FB.getAuthResponse()['accessToken'];
+        FB.api('/me', function(response) {
+          $.ajax({
+            type: 'POST',
+            url: '/fbconnect?state={{STATE}}',
+            processData: false,
+            data: access_token,
+            contentType: 'application/octet-stream; charset=utf-8',
+            success: function(result) {
+              // Handle or verify the server response if necessary.
+              if (result) {
+                $('#result').html('<div class="container mt-3"><div class="row justify-content-md-center"><div class="col-md-8 text-center"><p>Login Successful!</p>' + result + '<p class="mt-2">Redirecting...</p></div></div></div>');
+                //$('#result').html('loginSuccess.html')
+                setTimeout(function() {
+                  window.location.href = "/companies";
+                }, 4000);         
+              } else {
+                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+              }
+            }
+          });
+        });
+      }
+    </script>
+    
+  </head>
+  <body>  
+    <div class="container">
+      <div id="wrapper" class="border-bottom m-2 p-2">
+        <h3 class="text-center mt-4">Welcome to All About Cars!</h3>
+        <div class="row" id="logproviders">
+          <div class="col-md-5 border mt-5 ml-3 p-2">
+            <h4>Sign-in with Google:</h4>
+            <button class="g-signin2 btn btn-outline-light btn-lg" id="signinButton">Sign in with Google</button>
+          </div>
+          <div class="col-md-5 border mt-5 ml-3 p-2">
+            <h4>Sign-in with Facebook:</h4>
+            <!-- FB SIGNIN BUTTON -->
+            <button id="fb-button" class="btn btn-outline-light btn-lg">
+              <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+                <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+              </fb:login-button>
+            </button>
+          </div>
+        </div>
+        <div id="result"></div>
+      </div>
+    </div>
+    <!--GOOGLE PLUS SIGN IN -->
+    <script>
+      $('#signinButton').click(function () {
+      $('#logproviders').attr('style', 'display: none');
+        function signInCallback(authResult) {
+          if (authResult['code']) {
+            // Hide the sign-in button now that the user is authorized
+            $('#signinButton').attr('style', 'display:none');
+            // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+            $.ajax({
+              type: 'POST',
+              url: '/gconnect?state={{STATE}}',
+              processData: false,
+              data: authResult['code'],
+              contentType: 'application/octet-stream; charset=utf-8',
+              success: function (result) {
+                // Handle or verify the server response if necessary.
+                if (result) {
+                  $('#result').html('<div class="container mt-3"><div class="row justify-content-md-center"><div class="col-md-8 text-center"><p>Login Successful!</p>' + result + '<p class="mt-2">Redirecting...</p></div></div></div>');
+                  setTimeout(function () {
+                  window.location.href = "/companies";
+                  }, 4000);
+                } else if (authResult['error']) {
+                  console.log('There was an error: ' + authResult['error']);
+                } else {
+                  $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                }
+              }
+            });
+          }
+        }
+        auth2.grantOfflineAccess().then(signInCallback);
+      })
+    </script>
+    <!--END GOOGLE PLUS SIGN IN -->
+    {% include 'footer.html' %}
+

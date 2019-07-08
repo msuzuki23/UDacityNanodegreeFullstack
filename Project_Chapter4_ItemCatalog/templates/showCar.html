@@ -1,8 +1,25 @@
-<p>Hello from Show Car</p>
-<p><a href = "{{url_for('showCompany', company_id = car.company_id)}}"> <p>{{car.company.name}}</p></a>
-<p>{{car.car_name}}</p>
-<p>{{car.car_desc}}</p>
-
-<p><a href = "{{url_for('editCar',car_id = car.car_id)}}">Edit</a></p>
-
-<p><a href = "{{url_for('deleteCar',car_id = car.car_id)}}">Delete</a></p>
+{% include 'header.html' %}
+<div class="container">
+  <div id="wrapper" class="border-bottom m-2 p-2">
+    <div class="row">
+      <div class="col-md m-2 p-2">
+        <h4><a href = "{{url_for('main_api.showCompany', company_id = car.company_id)}}">{{car.company.name}}</a></h4>
+        <div class="row border m-2 p-2">
+          <div class="col-md">
+            <p>Car: {{car.car_name}}</p>
+            <p>Description:</p>
+            <p>{{car.car_desc}}</p>
+            {% if conUserId == car.user_id %}
+              <p class="text-right">
+                <a href = "{{url_for('main_api.editCar',car_id = car.car_id)}}" class="btn btn-primary">Edit</a>
+                <a href = "{{url_for('main_api.deleteCar',car_id = car.car_id)}}" class="btn btn-danger">Delete</a>
+                <a href = "{{url_for('main_api.showCompany', company_id=car.company_id)}}" class="btn btn-warning"> Cancel </a>
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

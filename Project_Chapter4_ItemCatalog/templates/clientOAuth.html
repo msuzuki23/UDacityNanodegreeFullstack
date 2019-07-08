@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js?onload=start"> </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	  <link rel="stylesheet" href="/static/stylesheets/base.css">
+    <script>
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '120590126637-mjtbdcpq1alt80mjeq192o1shf68ki2r.apps.googleusercontent.com'
+        });
+      });
+    </script>
+    <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <!-- FB SCRIPT -->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '387754945163220',
+          cookie     : true,  // enable cookies to allow the server to access the session
+          xfbml      : true,  // parse social plugins on this page
+          version    : 'v3.3' // The Graph API version to use for the call
+        });
+      };
+      // Load the SDK asynchronously
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+      // Here we run a very simple test of the Graph API after login is
+      // successful.  See statusChangeCallback() for when this call is made.
+      function sendTokenToServer() {
+        var access_token = FB.getAuthResponse()['accessToken'];
+        if (access_token) {
+        // Hide the sign-in button now that the user is authorized, for example:;
+          $('#providers').attr('style', 'display: none');
+          $('#result').html('<div class="mt-4"><h4>One-Time Auth Code:</h4><p>'+ access_token + '</p></div>') 
+        } 
+      }
+    </script>
+    <!-- Close FB Script -->
+  </head>
+  <body>
+    <div class="container">
+      <div id="wrapper" class="border-bottom m-2 p-2">
+        <div class="container">
+          <div class="row justify-content-md-center text-center">
+            <div class="col-md-11 p-1 mt-4">
+              <h2>Login with OAuth 2.0 </h2>
+              <div id="result"></div>
+            </div>
+          </div>
+        </div>
+        <!-- GOOGLE SIGN IN BUTTON -->
+        <div id="providers" class="row justify-content-md-center text-center">
+          <div class="col-md-3 border mt-5 ml-3 p-2">
+            <h4>Get Authorization Key with Google:</h4>
+            <div class="text-center">
+              <button  class="g-signin2 btn btn-outline-light btn-lg m-1" id="signinButton">Sign in with Google</button>
+            </div>
+          </div>
+          <!-- FBOOK BUTTON -->
+          <div class="col-md-3 border mt-5 ml-3 p-2">
+            <h4>Get Authorization Key with Facebook:</h4>
+            <div class="text-center">
+              <button id="fb-button" class="btn btn-outline-light btn-lg m-1">
+                <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+                  <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+                </fb:login-button>
+              </button>
+            </div>
+          </div>
+          <!-- END FBOOK BUTTON -->
+        </div>
+      </div>
+    </div>
+    <!-- Google Script -->
+    <script>
+        $('#signinButton').click(function() {
+          auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(signInCallback);
+        });
+      </script>
+      <script>
+        function signInCallback(json) {
+          authResult = json;
+          if (authResult['code']) {
+            // Hide the sign-in button now that the user is authorized, for example:
+            $('#providers').attr('style', 'display: none');
+            $('#result').html('<div class="mt-4"><h4>One-Time Auth Code:</h4><p>'+ authResult['code'] + '</p></div>') 
+          }
+        }
+      </script>
+      <!-- End Google Script-->
+  {% include 'footer.html' %}

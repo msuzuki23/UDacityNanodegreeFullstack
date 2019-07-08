@@ -1,13 +1,20 @@
-<form action="{{ url_for('editCar', car_id = car.car_id)}}" method = 'post'>
-
-
-	<p>Name:</p>
-		<input type ='text' size='30' name='car_name' placeholder = '{{car.car_name }}'>
-
-
-<input type='submit' value='Edit'>
-
-
-<a href = "companies.html"> Cancel </a>
-
-</form>
+{% include 'header.html' %}
+<div class="container">
+  <div id="wrapper" class="border-bottom m-2 p-2">
+    <div class="row">
+      <div class="col-md border m-2 p-2">
+        <form action="{{ url_for('main_api.editCar', car_id = car.car_id)}}" method = 'post'>
+	        <p>Name:</p>
+		      <p><textarea name='car_name' rows="1" cols="30">{{car.car_name}}</textarea></p>
+		      <p>Car Description:</p>
+		      <p><textarea name='car_desc' rows="4" cols="30">{{car.car_desc}}</textarea></p>
+          <p class="text-right mt-5">
+	          <input type='submit' value='Save' class="btn btn-primary">
+	          <a href="{{url_for('main_api.showCompany', company_id=car.company_id)}}" class="btn btn-warning">Cancel</a>
+          </p>
+        </form>
+	    </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

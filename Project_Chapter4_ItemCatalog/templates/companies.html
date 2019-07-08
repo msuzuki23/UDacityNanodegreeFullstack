@@ -1,24 +1,22 @@
-<html>
-<head>
-<!-- <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}"> -->
-	</head>
-
-<body>
-<h1>Companies</h1>
-<p>Hi there from Companies</p>
-
-<p><a href = "{{url_for('addCar')}}">Add Car</a></p>
-
-
-{% for company in companies %}
-<p><a href = "{{url_for('showCompany', company_id = company.id)}}"> <p>{{company.name}}</p></a>
-
-
-{% endfor %}
-
-
+{% include 'header.html' %}
+<div class="container">
+  <div id="wrapper" class="border-bottom m-2 p-2">
+	<div class="row p-2">
+	  <div class="col-md-2 border m-2 p-2">
+	    <h4>Companies</h4>
+		{% for company in companies %}
+		  <p><a href = "{{url_for('main_api.showCompany', company_id = company.id)}}">{{company.name}}</a></p>
+		{% endfor %}
+	  </div>
+	  <div class="col-md-8 border m-2 p-2">
+	    <h4>Most Recently Cars</h4>
+		{% for car in cars %}
+		  <p><a href = "{{url_for('main_api.showCar', car_id = car.car_id)}}"><p>{{car.car_name}}</p></a></p>
+		{% endfor %}
+	  </div>
+    </div>
+  </div>
 </div>
-</body>
-</html>
+{% include 'footer.html' %}
 
 

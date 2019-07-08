@@ -1,12 +1,18 @@
-<h1> Are you sure you want to delete {{car.car_name}}? </h1>
+{% include 'header.html' %}
+<div class="container">
+  <div id="wrapper" class="border-bottom m-2 p-2">
+    <div class="row">
+      <div class="col-md border m-2 p-2">
+        <h4> Are you sure you want to delete {{car.car_name}}? </h4>
+        <form action="#" method = 'post'>
+          <p class="text-right mt-5">
+            <input type='submit' value = 'Delete' class="btn btn-danger">
+            <a href = "{{url_for('main_api.showCompany', company_id=car.company_id)}}" class="btn btn-warning"> Cancel </a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}
 
-<form action="#" method = 'post'>
-
-<input type='submit', value = 'Delete'>
-
-
-
-
-</form>
-
-<a href = '#'> Cancel </a>

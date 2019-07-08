@@ -1,10 +1,25 @@
-<p>Hi from Show Company</p>
-
-{{company.name}}
-
-{% for car in cars %}
-<p><a href = "{{url_for('showCar', car_id=car.car_id)}}"> <p>{{car.car_name}}</p></a>
-
-
-{% endfor %}
-
+{% include 'header.html' %}
+<div class="container">
+  <div id="wrapper" class="border-bottom m-2 p-2">
+    <div class="row">
+      <div class="col-md m-2 p-2">
+        <h4>{{company.name}} cars:</h4>
+        {% for car in cars %}
+          <div class="row border m-2 p-2">
+            <div class="col-md">
+              <p>Car: <a href = "{{url_for('main_api.showCar', car_id=car.car_id)}}">{{car.car_name}}</a></p>
+              <p>Description: {{car.car_desc}}</p>
+              {% if conUserId == car.user_id %}
+                <p class="text-right">
+                  <a href="{{url_for('main_api.editCar',car_id = car.car_id)}}" class="btn btn-primary">Edit</a>
+                  <a href="{{url_for('main_api.deleteCar',car_id = car.car_id)}}" class="btn btn-danger">Delete</a>
+                </p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

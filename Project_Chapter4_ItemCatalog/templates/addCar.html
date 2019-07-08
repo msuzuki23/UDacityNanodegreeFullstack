@@ -1,24 +1,36 @@
-
-<h1>New Car/h1>
-
-<form action="#" method = 'post'>
-
-
-    <p>Car Name:</p>
-        <input type ='text' size='30' name='car_name'>
-    <p>Car Description:</p>
-    <textarea name='car_desc' rows="4" cols="50">Enter Car Description</textarea>
-    </br>
-
-    <select name='company_id'>
-        {% for company in companies %}
-        <option value="{{company.id}}">{{company.name}}</option>
-        {% endfor %}
-      </select> 
-
-
-
-
-<input type='submit' value='Create'>
-
-</form>
+{% include 'header.html' %}
+<div class="container">
+  <div id="wrapper" class="border-bottom m-2 p-2">
+    <div class="row border m-2 p-2">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <h4>Create New Car</h4>
+          <form action="#" method ='post'>
+            <div class="mt-4">
+              <p>Select Company:
+                <select name='company_id'>
+                  {% for company in companies %}
+                    <option value="{{company.id}}">{{company.name}}</option>
+                  {% endfor %}
+                </select>
+              </p>
+            </div>
+            <div class="mt-4">
+              <p>Car Name:<input type ='text' size='30' name='car_name'></p>
+            </div>
+            <div class="mt-4">
+              <p>Car Description:
+                <textarea name='car_desc' rows="4" cols="30">Enter Car Description</textarea>
+              </p>
+              <div class="text-right mt-3">
+                <input type='submit' value='Create' class="btn btn-primary">
+                <a href = "{{url_for('main_api.show')}}" class="btn btn-warning"> Cancel </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+]]</div>
+</div>
+{% include 'footer.html' %}

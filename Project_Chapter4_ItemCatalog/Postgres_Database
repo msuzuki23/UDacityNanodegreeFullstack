@@ -1,64 +1,26 @@
+# SQL Commands to CREATE and GRANT access to Table in Postgres
+
 CREATE TABLE companies (id SERIAL PRIMARY KEY, name VARCHAR(250) NOT NULL);
-
-GRANT ALL PRIVILEGES ON companies TO msuzuki;
-
 
 CREATE TABLE cars (
     car_id SERIAL PRIMARY KEY,
     car_name VARCHAR(50),
-    car_desc varchar(500),
-    company_id INTEGER REFERENCES companies (id)
+    car_desc varchar(200),
+    company_id INTEGER REFERENCES companies (id),
+    user_id INTEGER REFERENCES users(user_id)
 );
 
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    user_name VARCHAR(50),
+    user_email VARCHAR(100),
+    user_picture VARCHAR(300)
+);
+
+GRANT ALL PRIVILEGES ON companies TO msuzuki;
+GRANT ALL PRIVILEGES ON users TO msuzuki;
 GRANT ALL PRIVILEGES ON cars TO msuzuki;
 
-
-
-Cars Insert:
-    insert into cars(car_name, car_desc, company_id) values('325', 'fhsfoivdvs cs cscssfjsv', 1);
-    insert into cars(car_name, car_desc, company_id) values('a6', 'vdhvi sfjsioa w', 2);
-    insert into cars(car_name, car_desc, company_id) values('camry', 'hvaihf csjdcojs vsjvisjivs', 3);
-    insert into cars(car_name, car_desc, company_id) values('camaro', 'hvdsaishsd ifhvsjfoivs vishvos', 4);
-    insert into cars(car_name, car_desc, company_id) values('civic', ' hfsoihfoish jjsapcjd jcpsjvs', 5);
-    insert into cars(car_name, car_desc, company_id) values('f150', 'jdjvpjfp jspajpsfr', 6);
-    insert into cars(car_name, car_desc, company_id) values('versa', 'jcjspdjgd sajcp', 7);
-    insert into cars(car_name, car_desc, company_id) values('c250', 'jpdjpjsc jwpjfpwrf', 8);
-    insert into cars(car_name, car_desc, company_id) values('xc60', 'hfhsoacs hvohtejpas', 9);
-    insert into cars(car_name, car_desc, company_id) values('911', 'hvosaje hjacjprpa', 10);
-
-    insert into cars(car_name, car_desc, company_id) values('535', 'fhsfoivdvs cs cscssfjsv', 1);
-    insert into cars(car_name, car_desc, company_id) values('a3', 'vdhvi sfjsioa w', 2);
-    insert into cars(car_name, car_desc, company_id) values('corolla', 'hvaihf csjdcojs vsjvisjivs', 3);
-    insert into cars(car_name, car_desc, company_id) values('volt', 'hvdsaishsd ifhvsjfoivs vishvos', 4);
-    insert into cars(car_name, car_desc, company_id) values('accord', ' hfsoihfoish jjsapcjd jcpsjvs', 5);
-    insert into cars(car_name, car_desc, company_id) values('mustang', 'jdjvpjfp jspajpsfr', 6);
-    insert into cars(car_name, car_desc, company_id) values('murano', 'jcjspdjgd sajcp', 7);
-    insert into cars(car_name, car_desc, company_id) values('e350', 'jpdjpjsc jwpjfpwrf', 8);
-    insert into cars(car_name, car_desc, company_id) values('xc90', 'hfhsoacs hvohtejpas', 9);
-    insert into cars(car_name, car_desc, company_id) values('cayenne', 'hvosaje hjacjprpa', 10);
-
-
-
-
-
-
-
-
-
-Companies Insert:
-    insert into companies(name) values('bmw');
-    insert into companies(name) values('audi');
-    insert into companies(name) values('toyota');
-    insert into companies(name) values('chevy');
-    insert into companies(name) values('honda');
-    insert into companies(name) values('ford');
-    insert into companies(name) values('nissan');
-    insert into companies(name) values('mercedes');
-    insert into companies(name) values('volvo');
-    insert into companies(name) values('porsche');
-
-
-
-
-
-
+GRANT USAGE, SELECT ON SEQUENCE companies_id_seq TO msuzuki;
+GRANT USAGE, SELECT ON SEQUENCE users_user_id_seq TO msuzuki;
+GRANT USAGE, SELECT ON SEQUENCE cars_car_id_seq TO msuzuki;
