@@ -58,20 +58,12 @@ def showCompany(company_id):
     conUserId = login_session['user_id']
     return render_template('showCompany.html',
                             company=company, cars=cars, conUserId=conUserId)
-    # if 'user_id' in login_session:
-    #     conUserId = login_session['user_id']
-    #     return render_template('showCompany.html',
-    #                            company=company, cars=cars, conUserId=conUserId)
-    # return render_template('showCompany.html',
-    #                        company=company, cars=cars, conUserId='null')
 
 
 @main_api.route('/car/<int:car_id>')
 @login_required
 def showCar(car_id):
     car = session.query(Cars).filter_by(car_id=car_id).one()
-    # if 'username' not in login_session:
-    #     return render_template('showCar.html', car=car, conUserId='null')
     conUserId = login_session['user_id']
     return render_template('showCar.html', car=car, conUserId=conUserId)
 
@@ -79,8 +71,6 @@ def showCar(car_id):
 @main_api.route('/car/new', methods=['GET', 'POST'])
 @login_required
 def addCar():
-    # if 'username' not in login_session:
-    #     return redirect('/login')
     if request.method == 'POST':
         newCar = Cars(car_name=request.form['car_name'],
                       car_desc=request.form['car_desc'],
@@ -100,8 +90,6 @@ def addCar():
 @main_api.route('/car/<int:car_id>/edit/', methods=['GET', 'POST'])
 @login_required
 def editCar(car_id):
-    # if 'username' not in login_session:
-    #     return redirect('/login')
     editedCar = session.query(Cars).filter_by(car_id=car_id).one()
     if editedCar.user_id != login_session['user_id']:
         flash("You are not authorized to edit this item.")
@@ -120,8 +108,6 @@ def editCar(car_id):
 @main_api.route('/car/<int:car_id>/delete/', methods=['GET', 'POST'])
 @login_required
 def deleteCar(car_id):
-    # if 'username' not in login_session:
-    #     return redirect('/login')
     carToDelete = session.query(Cars).filter_by(car_id=car_id).one()
     if carToDelete.user_id != login_session['user_id']:
         flash("You are not authorized to edit this item.")

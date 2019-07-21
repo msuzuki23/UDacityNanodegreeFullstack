@@ -85,7 +85,6 @@ class Cars(Base):
             'car_desc': self.car_desc,
             'company_id': self.company.id,
             'company_name': self.company.name,
-            # 'user': self.user,
         }
 
 

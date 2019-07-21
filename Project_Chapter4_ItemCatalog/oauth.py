@@ -147,10 +147,6 @@ def fbdisconnect():
     url = 'https://graph.facebook.com/%s/permissions' % facebook_id
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
-    # del login_session['username']
-    # del login_session['email']
-    # del login_session['picture']
-    # del login_session['user_id']
     del login_session['facebook_id']
     return "you have been logged out"
 
@@ -216,11 +212,6 @@ def fbconnect():
 @oauth_api.route('/disconnect')
 def disconnect():
     if 'provider' in login_session:
-        # if login_session['provider'] == 'google':
-        #     gdisconnect()
-        #     # del login_session['gplus_id']
-        #     # del login_session['credentials']
-        #     # del login_session['access_token']
         if login_session['provider'] == 'facebook':
             fbdisconnect()
             # del login_session['facebook_id']
