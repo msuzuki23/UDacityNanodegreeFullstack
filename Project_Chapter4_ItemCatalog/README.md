@@ -4,7 +4,7 @@
 <h2>About</h2>
   <p>The application provides a list of items, in this case companies where user can interact with the cars made by the related companies.</p>
   <p>User must be authenticated and logged-in in order to perform add/edit/delete of cars.</p>
-  <p>Authentication users Google and Facebook oauth authorization.</p>
+  <p>Authentication of users is provided through Google and Facebook oauth authorization.</p>
 
 <h2>Features</h2>
   <ul>
