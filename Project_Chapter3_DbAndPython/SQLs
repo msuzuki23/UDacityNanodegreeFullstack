@@ -1,26 +1,6 @@
-#########################################################################################################
-# Pushed news.sql into postgresql:
-    sudo -u postgres psql postgres < /home/msuzuki/Downloads/newsdata.sql
-
-
-#########################################################################################################
-# Show Tables in psql:
-
-    postgres=# \dt
-
-            List of relations
-    Schema |   Name   | Type  |  Owner   
-    --------+----------+-------+----------
-    public | articles | table | postgres
-    public | authors  | table | postgres
-    public | log      | table | postgres
-    (3 rows)
-
-
-#########################################################################################################
 # Describe Table articles
 
-    postgres=# \d articles
+    news=# \d articles
 
                                         Table "public.articles"
     Column |           Type           | Collation | Nullable |               Default                
@@ -42,7 +22,7 @@
 ########################################################################################################
 # Sample Table articles:
 
-    postgres=# select * from articles order by id limit 5;
+    news=# select * from articles order by id limit 5;
 
      author |              title               |         slug         |                                                lead                                                 |                                                                                            body                                                                                             |             time              | id 
 --------+----------------------------------+----------------------+-----------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------+----
@@ -57,7 +37,7 @@
 ########################################################################################################
 # Count Records in articles:
     
-    postgres=# select count(*) from articles;
+    news=# select count(*) from articles;
     count 
     -------
         8
@@ -67,7 +47,7 @@
 #########################################################################################################
 # Count Records in authors:
 
-    postgres=# select count(*) from authors;
+    news=# select count(*) from authors;
     count 
     -------
         4
@@ -77,7 +57,7 @@
 #########################################################################################################
 # Describe Table log:
 
-    postgres=# \d log
+    news=# \d log
                                         Table "public.log"
     Column |           Type           | Collation | Nullable |             Default             
     --------+--------------------------+-----------+----------+---------------------------------
@@ -94,7 +74,7 @@
 #########################################################################################################        
 # Sample Table logs:
 
-    postgres=# select * from log order by id limit 5;
+    news=# select * from log order by id limit 5;
                 path              |       ip       | method | status |          time          |   id    
     -------------------------------+----------------+--------+--------+------------------------+---------
     /                             | 198.51.100.195 | GET    | 200 OK | 2016-07-01 03:00:00-04 | 1678923
@@ -108,7 +88,7 @@
 ###########################################################################################################
 # Most Popular Articles of All Times. Top 3 Articles:
 
-    postgres=# SELECT path, COUNT(path) count_views FROM log GROUP BY path ORDER BY count_views DESC LIMIT 3;
+    news=# SELECT path, COUNT(path) count_views FROM log GROUP BY path ORDER BY count_views DESC LIMIT 3;
                 path             | count_views 
     -----------------------------+-------------
     /                           |      479121
@@ -123,20 +103,20 @@
 ###########################################################################################################
 # Most Popular Articles of All Times. Top 3 Articles ("CLEANED RESULTS"):
 
-    postgres=# SELECT REVERSE(SPLIT_PART(REVERSE(path), '/', 1)) article, COUNT(path) count_views FROM log WHERE path != '/' GROUP BY article ORDER BY count_views DESC LIMIT 3;
-        article       | count_views 
-    --------------------+-------------
-    candidate-is-jerk  |      338647
-    bears-love-berries |      253801
-    bad-things-gone    |      170098
+    news=# SELECT a.title, top3.count_views FROM (SELECT REVERSE(SPLIT_PART(REVERSE(path), '/', 1)) article, COUNT(path) count_views FROM log WHERE path != '/' GROUP BY article ORDER BY count_views DESC LIMIT 3) top3 LEFT JOIN articles a ON top3.article=a.slug;
+    
+                title               | count_views 
+    ----------------------------------+-------------
+    Bad things gone, say good people |      170098
+    Bears love berries, alleges bear |      253801
+    Candidate is jerk, alleges rival |      338647
     (3 rows)
-
 
 
 ############################################################################################################
 # Most Popular Author of All Time. Top 3 Authors:
 
-    postgres=# WITH top3 AS (SELECT REVERSE(SPLIT_PART(REVERSE(path), '/', 1)) article, COUNT(path) count_views FROM log WHERE path != '/' GROUP BY article ORDER BY count_views DESC LIMIT 3), aut3 AS (SELECT article, count_views, author FROM top3, articles art WHERE top3.article=art.slug) SELECT name, article, count_views FROM aut3, authors WHERE aut3.author=authors.id order by count_views DESC;
+    news=# WITH top3 AS (SELECT REVERSE(SPLIT_PART(REVERSE(path), '/', 1)) article, COUNT(path) count_views FROM log WHERE path != '/' GROUP BY article ORDER BY count_views DESC LIMIT 3), aut3 AS (SELECT article, count_views, author FROM top3, articles art WHERE top3.article=art.slug) SELECT name, article, count_views FROM aut3, authors WHERE aut3.author=authors.id order by count_views DESC;
             name          |      article       | count_views 
     ------------------------+--------------------+-------------
     Rudolf von Treppenwitz | candidate-is-jerk  |      338647
@@ -152,7 +132,7 @@
 
     # Describe log Table:
 
-        postgres=# \d log
+        news=# \d log
                                             Table "public.log"
         Column |           Type           | Collation | Nullable |             Default             
         --------+--------------------------+-----------+----------+---------------------------------
@@ -168,7 +148,7 @@
     
     # Sample Errors on log Table:
 
-        postgres=# select distinct(status) from log;
+        news=# select distinct(status) from log;
             status     
         ---------------
         200 OK
@@ -178,7 +158,7 @@
 
     # Test query to pull date from timestamp
 
-        postgres=# SELECT *, time::TIMESTAMP::DATE from log order by id limit 3;
+        news=# SELECT *, time::TIMESTAMP::DATE from log order by id limit 3;
                     path            |       ip       | method | status |          time          |   id    |    time    
         ----------------------------+----------------+--------+--------+------------------------+---------+------------
         /                          | 198.51.100.195 | GET    | 200 OK | 2016-07-01 03:00:00-04 | 1678923 | 2016-07-01
@@ -191,7 +171,7 @@
     
     # Counts '404 NOT FOUND' Errors:
 
-            postgres=# SELECT time::TIMESTAMP::DATE as date, COUNT(status) count_err FROM log WHERE status='404 NOT FOUND' GROUP BY time::TIMESTAMP::DATE;
+            news=# SELECT time::TIMESTAMP::DATE as date, COUNT(status) count_err FROM log WHERE status='404 NOT FOUND' GROUP BY time::TIMESTAMP::DATE;
                 date    | count_err 
             ------------+-----------
             2016-07-03 |       393
@@ -233,9 +213,9 @@
     
     # Query to Check Division count_err / total_err:
 
-        postgres=# WITH err AS (SELECT time::TIMESTAMP::DATE as date, COUNT(status) count_err FROM log WHERE status='404 NOT FOUND' GROUP BY time::TIMESTAMP::DATE),
-        postgres-#             total AS (SELECT time::TIMESTAMP::DATE as date, COUNT(status) total_err FROM log GROUP BY time::TIMESTAMP::DATE)
-        postgres-#             SELECT total.date, count_err, total_err, ROUND((count_err::decimal/total_err::decimal)*100, 1) as Perc_Error FROM err, total WHERE err.date=total.date;
+        news=# WITH err AS (SELECT time::TIMESTAMP::DATE as date, COUNT(status) count_err FROM log WHERE status='404 NOT FOUND' GROUP BY time::TIMESTAMP::DATE),
+        news-#             total AS (SELECT time::TIMESTAMP::DATE as date, COUNT(status) total_err FROM log GROUP BY time::TIMESTAMP::DATE)
+        news-#             SELECT total.date, count_err, total_err, ROUND((count_err::decimal/total_err::decimal)*100, 1) as Perc_Error FROM err, total WHERE err.date=total.date;
             date    | count_err | total_err | perc_error 
         ------------+-----------+-----------+------------
         2016-07-01 |       342 |     47857 |        0.7
@@ -277,9 +257,9 @@
 
     # Now query to get the days that the Error is above 1%:
 
-        postgres=# WITH err AS (SELECT time::TIMESTAMP::DATE as date, COUNT(status) count_err FROM log WHERE status='404 NOT FOUND' GROUP BY time::TIMESTAMP::DATE),
-        postgres-#         total AS (SELECT time::TIMESTAMP::DATE as date, COUNT(status) total_err FROM log GROUP BY time::TIMESTAMP::DATE)
-        postgres-#         SELECT total.date, count_err, total_err, ROUND((count_err::decimal/total_err::decimal)*100, 1) as perc_error FROM err, total WHERE err.date=total.date AND ROUND((count_err::decimal/total_err::decimal)*100, 1) > 1;
+        news=# WITH err AS (SELECT time::TIMESTAMP::DATE as date, COUNT(status) count_err FROM log WHERE status='404 NOT FOUND' GROUP BY time::TIMESTAMP::DATE),
+        news-#         total AS (SELECT time::TIMESTAMP::DATE as date, COUNT(status) total_err FROM log GROUP BY time::TIMESTAMP::DATE)
+        news-#         SELECT total.date, count_err, total_err, ROUND((count_err::decimal/total_err::decimal)*100, 1) as perc_error FROM err, total WHERE err.date=total.date AND ROUND((count_err::decimal/total_err::decimal)*100, 1) > 1;
             
             date    | count_err | total_err | perc_error 
         ------------+-----------+-----------+------------
@@ -293,17 +273,19 @@
 
     # Top 3 Articles:
 
-        CREATE VIEW top3art AS SELECT REVERSE(SPLIT_PART(REVERSE(path), '/', 1)) article, COUNT(path) count_views FROM log 
-        WHERE path != '/' GROUP BY article ORDER BY count_views DESC LIMIT 3;
+        CREATE VIEW top3artic AS SELECT a.title, top3.count_views FROM (SELECT REVERSE(SPLIT_PART(REVERSE(path), '/', 1)) 
+        article, COUNT(path) count_views FROM log WHERE path != '/' GROUP BY article ORDER BY count_views DESC LIMIT 3) 
+        top3 LEFT JOIN articles a ON top3.article=a.slug;
 
         # Test View works:
 
-            postgres=# SELECT * FROM top3art;
-                article       | count_views 
-            --------------------+-------------
-            candidate-is-jerk  |      338647
-            bears-love-berries |      253801
-            bad-things-gone    |      170098
+            news=# SELECT * FROM top3artic;
+
+                        title               | count_views 
+            ----------------------------------+-------------
+            Bad things gone, say good people |      170098
+            Bears love berries, alleges bear |      253801
+            Candidate is jerk, alleges rival |      338647
             (3 rows)
 
 
@@ -316,7 +298,7 @@
 
         # Test View works:
 
-            postgres=# SELECT * FROM pop3auth;
+            news=# SELECT * FROM pop3auth;
                     name          |      article       | count_views 
             ------------------------+--------------------+-------------
             Rudolf von Treppenwitz | candidate-is-jerk  |      338647
@@ -335,7 +317,7 @@
 
         # Test View works:
 
-            postgres=# SELECT * FROM dayError1Perc;
+            news=# SELECT * FROM dayError1Perc;
                 date    | count_err | total_err | perc_error 
             ------------+-----------+-----------+------------
             2016-07-17 |      1272 |     55779 |        2.3
