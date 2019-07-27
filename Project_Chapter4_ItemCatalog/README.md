@@ -17,7 +17,8 @@
   <p>The OS that was used for this project is Ubuntu 18.04LTS. Some minor adjustment maybe needed in case you are running a Windows machine, such as directory paths.</p>
   <p>The database used for this project is postgresql.</p>
   <p>The python version used for this project is 3.6.8.</p>
-  <p>To create and grant access to the tables the SQL Commands are located in file Postgres_Database.</p>
+  <p>To create and grant access to the tables, the SQL Commands are located in file Postgres_Database.</p>
   <p>After the tables and permissions are set in the DB. Run python script "seed.py" to iniatilly seed the tables in the database.</p>
   <p>The entry script/code to the application is app.py. app.py provides all the "links" to the application Blueprints.</p>
+  <p>The application is set to work on localhost on port 5000, localhost:5000.</p>
   <p>Flask Blueprints were used for this project to keep the code better organized and compartimentalized according to the functionality.</p>
