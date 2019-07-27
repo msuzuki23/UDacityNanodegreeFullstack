@@ -1,4 +1,6 @@
 # !/usr/bin/python3.6.8
+# This module sets-up the class/template
+# for the connection between DB and app
 
 import os
 import sys
@@ -12,33 +14,42 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 
 Base = declarative_base()
+
+# Generate hash key
 secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits)
                      for x in range(32))
 
+# Database user and password
 dbUser = os.environ.get('POSTGRES_USER')
 dbPW = os.environ.get('POSTGRES_PW')
 
 
+# User class/template
 class User(Base):
     __tablename__ = 'users'
     user_id = Column(Integer, primary_key=True)
     user_name = Column(String(50), nullable=False)
-    user_email = Column(String(100), index=True)  # nullable=False)
+    user_email = Column(String(100), index=True)
     user_picture = Column(String(50))
     password_hash = Column(String(64))
 
+    # Generate password hash
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
 
+    # Verify password
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
+    # Generate authentication token
     def generate_auth_token(self, expiration=600):
         s=Serializer(secret_key, expires_in=expiration)
         return s.dumps({'id': self.user_id})
 
+
     @staticmethod
     def verify_auth_token(token):
+        """Verifies authentication token"""
         s = Serializer(secret_key)
         try:
             data = s.loads(token)
@@ -52,6 +63,7 @@ class User(Base):
         return user_id
 
 
+# Company class/template
 class Company(Base):
     __tablename__ = 'companies'
     id = Column(Integer, primary_key=True)
@@ -66,6 +78,7 @@ class Company(Base):
         }
 
 
+# Car class/template
 class Cars(Base):
     __tablename__ = 'cars'
     car_id = Column(Integer, primary_key=True)
@@ -88,5 +101,6 @@ class Cars(Base):
         }
 
 
+# Create database engine
 engine = create_engine('postgresql+psycopg2://'+dbUser+':'+dbPW+'@localhost/postgres')
 Base.metadata.create_all(engine)

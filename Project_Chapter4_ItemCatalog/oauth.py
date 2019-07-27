@@ -1,4 +1,7 @@
 #!/usr/bin/python3.6.8
+# This module contains all the oauth
+# authentication routes for both
+# Google and Facebook
 
 import json
 import random
@@ -17,13 +20,19 @@ from flask import Flask, render_template, request
 from flask import redirect, jsonify, url_for, abort
 from flask import g, make_response, flash, Blueprint
 
+# Create oauth_api blueprint
 oauth_api = Blueprint('oauth_api', __name__)
+
+# Google client secret
 CLIENT_ID = json.loads(open('client_secrets.json',
                             'r').read())['web']['client_id']
 
 
+# Google Authentication
 @oauth_api.route('/gconnect', methods=['POST'])
 def gconnect():
+    """Authenticate user using Google"""
+
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -108,9 +117,12 @@ def gconnect():
     return output
 
 
-# DISCONNECT - Revoke a current user's token and reset their login_session
+# Google DISCONNECT - Revoke a current
+# user's token and reset their login_session
 @oauth_api.route('/gdisconnect')
 def gdisconnect():
+    """Disconnect user using Google"""
+
     access_token = login_session.get('access_token')
     if access_token is None:
         response = make_response(json.dumps(
@@ -141,8 +153,11 @@ def gdisconnect():
     return response
 
 
+# Facebook DISCONNECT
 @oauth_api.route('/fbdisconnect')
 def fbdisconnect():
+    """Disconnect user using Facebook"""
+
     facebook_id = login_session['facebook_id']
     url = 'https://graph.facebook.com/%s/permissions' % facebook_id
     h = httplib2.Http()
@@ -150,8 +165,12 @@ def fbdisconnect():
     del login_session['facebook_id']
     return "you have been logged out"
 
+
+# Facebook connect/authenticate
 @oauth_api.route('/fbconnect', methods=['POST'])
 def fbconnect():
+    """Authenticate user using Facebook"""
+
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -209,8 +228,13 @@ def fbconnect():
     return output
 
 
+# Authentication disconnection
+# common functionalities
 @oauth_api.route('/disconnect')
 def disconnect():
+    """Disconnect common functionalities"""
+
+    # Check providers
     if 'provider' in login_session:
         if login_session['provider'] == 'facebook':
             fbdisconnect()

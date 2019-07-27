@@ -1,8 +1,11 @@
 #!/usr/bin/python3.6.8
+# This module seeds initial data
+# to database
 
 import os
 import psycopg2 as pg
 
+# Database user and password
 dbUser = os.environ.get('POSTGRES_USER')
 dbPW = os.environ.get('POSTGRES_PW')
 
@@ -53,6 +56,8 @@ companies = {
         ]
     }
 
+# Get company indexes and use company indexes
+# to insert cars in table cars
 for company in companies:
     cursor.execute("SELECT id FROM companies WHERE name='"+company+"'")
     companyID = cursor.fetchone()
